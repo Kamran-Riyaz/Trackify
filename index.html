@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trackify</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Add Inter font -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-gray-100 text-gray-900 min-h-screen flex items-center justify-center p-4 flex-col"
+  >
+    <!-- Motivational Quote -->
+    <div class="w-full text-center mb-6 text-xl text-gray-800">
+      <q>The journey of a thousand miles begins with one step.</q>
+      <p class="text-gray-600">- Lao Tzu</p>
+    </div>
+
+    <div class="w-full max-w-md bg-white p-6 rounded-2xl shadow-lg mb-6">
+      <h1 class="text-2xl font-bold text-center mb-4">Trackify</h1>
+
+      <label for="totalDays" class="block mb-2">Enter number of days:</label>
+      <input
+        type="number"
+        id="totalDays"
+        class="w-full mb-4 p-2 border rounded"
+        min="1"
+        max="365"
+        placeholder="e.g. 21 or 100"
+      />
+      <button
+        onclick="generateDays()"
+        class="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 mb-4"
+      >
+        Start Challenge
+      </button>
+
+      <div id="daysContainer" class="grid grid-cols-3 gap-2"></div>
+
+      <button
+        onclick="confirmReset()"
+        class="w-full bg-red-500 text-white py-2 mt-4 rounded hover:bg-red-600"
+      >
+        Reset Progress
+      </button>
+    </div>
+
+    <!-- Footer -->
+    <footer class="w-full text-center text-gray-500 mt-6">
+      <p>
+        Developed by
+        <a
+          href="https://kamran-riyaz.github.io/"
+          target="_blank"
+          class="text-blue-500 hover:underline"
+          >Kamran Riyaz</a
+        >
+      </p>
+    </footer>
+
+    <script>
+      const container = document.getElementById("daysContainer");
+
+      function generateDays() {
+        const totalDays = parseInt(document.getElementById("totalDays").value);
+        if (!totalDays || totalDays <= 0) return;
+
+        localStorage.setItem("challengeDays", totalDays);
+
+        container.innerHTML = "";
+        for (let i = 1; i <= totalDays; i++) {
+          const isChecked = JSON.parse(localStorage.getItem(`day_${i}`));
+
+          const dayDiv = document.createElement("div");
+          dayDiv.className = "flex items-center space-x-2";
+
+          const checkbox = document.createElement("input");
+          checkbox.type = "checkbox";
+          checkbox.checked = isChecked;
+          checkbox.addEventListener("change", () => {
+            localStorage.setItem(`day_${i}`, checkbox.checked);
+          });
+
+          const label = document.createElement("label");
+          label.textContent = `Day ${i}`;
+
+          dayDiv.appendChild(checkbox);
+          dayDiv.appendChild(label);
+          container.appendChild(dayDiv);
+        }
+      }
+
+      function confirmReset() {
+        const confirmAction = confirm(
+          "Are you sure you want to reset all progress? This action cannot be undone."
+        );
+        if (confirmAction) {
+          resetProgress();
+        }
+      }
+
+      function resetProgress() {
+        const totalDays = parseInt(localStorage.getItem("challengeDays"));
+        if (totalDays) {
+          for (let i = 1; i <= totalDays; i++) {
+            localStorage.removeItem(`day_${i}`);
+          }
+          localStorage.removeItem("challengeDays");
+          container.innerHTML = "";
+          document.getElementById("totalDays").value = "";
+        }
+      }
+
+      // Load existing progress
+      window.addEventListener("load", () => {
+        const savedDays = parseInt(localStorage.getItem("challengeDays"));
+        if (savedDays) {
+          document.getElementById("totalDays").value = savedDays;
+          generateDays();
+        }
+      });
+    </script>
+  </body>
+</html>
