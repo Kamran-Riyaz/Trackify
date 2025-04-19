@@ -23,9 +23,8 @@
 
 ---
 
-## 📸 Demo
-
-![Trackify Screenshot](screenshot.png) <!-- Replace with a real screenshot -->
+## 🌐 Live Demo
+👉 [Click here to view the app](https://kamran-riyaz.github.io/Trackify/)
 
 ---
 
