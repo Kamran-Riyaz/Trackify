@@ -5,9 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Trackify</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Add Inter font -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter&display=swap"
       rel="stylesheet"
     />
     <style>
@@ -17,16 +16,27 @@
     </style>
   </head>
   <body
-    class="bg-gray-100 text-gray-900 min-h-screen flex items-center justify-center p-4 flex-col"
+    class="bg-gray-100 text-gray-900 min-h-screen flex flex-col items-center justify-center p-4"
   >
-    <!-- Motivational Quote -->
-    <div class="w-full text-center mb-6 text-xl text-gray-800">
-      <q>The journey of a thousand miles begins with one step.</q>
-      <p class="text-gray-600">- Lao Tzu</p>
-    </div>
+    <div class="w-full max-w-md bg-white p-6 rounded-2xl shadow-lg">
+      <h1 id="challengeTitle" class="text-2xl font-bold text-center mb-2">
+        Trackify
+      </h1>
 
-    <div class="w-full max-w-md bg-white p-6 rounded-2xl shadow-lg mb-6">
-      <h1 class="text-2xl font-bold text-center mb-4">Trackify</h1>
+      <div
+        class="bg-blue-100 text-blue-900 text-sm p-3 rounded-lg mb-4 text-center italic"
+      >
+        <p>"The journey of a thousand miles begins with one step."</p>
+        <p class="mt-1 text-xs font-medium">— Lao Tzu</p>
+      </div>
+
+      <label for="challengeName" class="block mb-2">Challenge Name:</label>
+      <input
+        type="text"
+        id="challengeName"
+        class="w-full mb-4 p-2 border rounded"
+        placeholder="e.g. 100 Days of Code"
+      />
 
       <label for="totalDays" class="block mb-2">Enter number of days:</label>
       <input
@@ -54,25 +64,34 @@
       </button>
     </div>
 
-    <!-- Footer -->
-    <footer class="w-full text-center text-gray-500 mt-6">
-      <p>
-        Developed by
-        <a
-          href="https://kamran-riyaz.github.io/"
-          target="_blank"
-          class="text-blue-500 hover:underline"
-          >Kamran Riyaz</a
-        >
-      </p>
+    <footer class="mt-6 text-sm text-gray-600">
+      Developed by
+      <a
+        href="https://kamran-riyaz.github.io/"
+        class="text-blue-500 hover:underline"
+        target="_blank"
+        >Kamran Riyaz</a
+      >
     </footer>
 
     <script>
       const container = document.getElementById("daysContainer");
+      const title = document.getElementById("challengeTitle");
 
       function generateDays() {
+        const challengeName = document
+          .getElementById("challengeName")
+          .value.trim();
         const totalDays = parseInt(document.getElementById("totalDays").value);
         if (!totalDays || totalDays <= 0) return;
+
+        if (challengeName) {
+          title.textContent = challengeName;
+          localStorage.setItem("challengeName", challengeName);
+        } else {
+          title.textContent = "Trackify";
+          localStorage.removeItem("challengeName");
+        }
 
         localStorage.setItem("challengeDays", totalDays);
 
@@ -115,14 +134,24 @@
             localStorage.removeItem(`day_${i}`);
           }
           localStorage.removeItem("challengeDays");
+          localStorage.removeItem("challengeName");
           container.innerHTML = "";
           document.getElementById("totalDays").value = "";
+          document.getElementById("challengeName").value = "";
+          title.textContent = "Trackify";
         }
       }
 
       // Load existing progress
       window.addEventListener("load", () => {
         const savedDays = parseInt(localStorage.getItem("challengeDays"));
+        const savedName = localStorage.getItem("challengeName");
+
+        if (savedName) {
+          document.getElementById("challengeName").value = savedName;
+          title.textContent = savedName;
+        }
+
         if (savedDays) {
           document.getElementById("totalDays").value = savedDays;
           generateDays();
