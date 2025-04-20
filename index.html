@@ -1,145 +1,196 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Trackify</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
-  <style>
-    body { font-family: 'Inter', sans-serif; }
-  </style>
-</head>
-<body class="bg-gray-100 text-gray-900 min-h-screen flex flex-col items-center justify-center p-4">
-  <div class="w-full max-w-md bg-white p-6 rounded-2xl shadow-lg">
-    <h1 id="challengeTitle" class="text-2xl font-bold text-center mb-2">Trackify</h1>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trackify</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-gray-100 text-gray-900 min-h-screen flex flex-col items-center justify-center p-4"
+  >
+    <div class="w-full max-w-md bg-white p-6 rounded-2xl shadow-lg">
+      <h1 id="challengeTitle" class="text-2xl font-bold text-center mb-2">
+        Trackify
+      </h1>
 
-    <div class="bg-blue-100 text-blue-900 text-sm p-3 rounded-lg mb-4 text-center italic">
-      <p>"The journey of a thousand miles begins with one step."</p>
-      <p class="mt-1 text-xs font-medium">— Lao Tzu</p>
+      <div
+        class="bg-blue-100 text-blue-900 text-sm p-3 rounded-lg mb-4 text-center italic"
+      >
+        <p>"The journey of a thousand miles begins with one step."</p>
+        <p class="mt-1 text-xs font-medium">— Lao Tzu</p>
+      </div>
+
+      <label for="challengeName" class="block mb-2">Challenge Name:</label>
+      <input
+        type="text"
+        id="challengeName"
+        class="w-full mb-4 p-2 border rounded"
+        placeholder="e.g. 100 Days of Code"
+      />
+
+      <label for="totalDays" class="block mb-2">Enter number of days:</label>
+      <input
+        type="number"
+        id="totalDays"
+        class="w-full mb-4 p-2 border rounded"
+        min="1"
+        max="365"
+        placeholder="e.g. 21 or 100"
+      />
+
+      <p id="dateRange" class="text-sm text-gray-600 text-center mb-4"></p>
+
+      <button
+        onclick="generateDays()"
+        class="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 mb-4"
+      >
+        Start Challenge
+      </button>
+
+      <div id="daysContainer" class="grid grid-cols-3 gap-2"></div>
+
+      <button
+        onclick="confirmReset()"
+        class="w-full bg-red-500 text-white py-2 mt-4 rounded hover:bg-red-600"
+      >
+        Reset Progress
+      </button>
     </div>
 
-    <label for="challengeName" class="block mb-2">Challenge Name:</label>
-    <input type="text" id="challengeName" class="w-full mb-4 p-2 border rounded" placeholder="e.g. 100 Days of Code" />
+    <footer class="mt-6 text-sm text-gray-600">
+      Developed by
+      <a
+        href="https://kamran-riyaz.github.io/"
+        class="text-blue-500 hover:underline"
+        target="_blank"
+        >Kamran Riyaz</a
+      >
+    </footer>
 
-    <label for="totalDays" class="block mb-2">Enter number of days:</label>
-    <input type="number" id="totalDays" class="w-full mb-4 p-2 border rounded" min="1" max="365" placeholder="e.g. 21 or 100" />
+    <script>
+      const container = document.getElementById("daysContainer");
+      const title = document.getElementById("challengeTitle");
+      const dateRange = document.getElementById("dateRange");
 
-    <p id="dateRange" class="text-sm text-gray-600 text-center mb-4"></p>
-
-    <button onclick="generateDays()" class="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 mb-4">Start Challenge</button>
-
-    <div id="daysContainer" class="grid grid-cols-3 gap-2"></div>
-
-    <button onclick="confirmReset()" class="w-full bg-red-500 text-white py-2 mt-4 rounded hover:bg-red-600">Reset Progress</button>
-  </div>
-
-  <footer class="mt-6 text-sm text-gray-600">
-    Developed by <a href="https://kamran-riyaz.github.io/" class="text-blue-500 hover:underline" target="_blank">Kamran Riyaz</a>
-  </footer>
-
-  <script>
-    const container = document.getElementById('daysContainer');
-    const title = document.getElementById('challengeTitle');
-    const dateRange = document.getElementById('dateRange');
-
-    function formatDate(date) {
-      return date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
-    }
-
-    function generateDays() {
-      const challengeName = document.getElementById('challengeName').value.trim();
-      const totalDays = parseInt(document.getElementById('totalDays').value);
-      if (!totalDays || totalDays <= 0) return;
-
-      const startDate = new Date();
-      const endDate = new Date();
-      endDate.setDate(startDate.getDate() + totalDays - 1);
-
-      dateRange.textContent = `Challenge Duration: ${formatDate(startDate)} to ${formatDate(endDate)}`;
-
-      if (challengeName) {
-        title.textContent = challengeName;
-        localStorage.setItem('challengeName', challengeName);
-      } else {
-        title.textContent = 'Trackify';
-        localStorage.removeItem('challengeName');
-      }
-
-      localStorage.setItem('challengeDays', totalDays);
-      localStorage.setItem('startDate', startDate.toISOString());
-
-      container.innerHTML = '';
-      for (let i = 1; i <= totalDays; i++) {
-        const isChecked = JSON.parse(localStorage.getItem(`day_${i}`));
-
-        const dayDiv = document.createElement('div');
-        dayDiv.className = 'flex items-center space-x-2';
-
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.checked = isChecked;
-        checkbox.addEventListener('change', () => {
-          localStorage.setItem(`day_${i}`, checkbox.checked);
+      function formatDate(date) {
+        return date.toLocaleDateString(undefined, {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
         });
-
-        const label = document.createElement('label');
-        label.textContent = `Day ${i}`;
-
-        dayDiv.appendChild(checkbox);
-        dayDiv.appendChild(label);
-        container.appendChild(dayDiv);
       }
-    }
 
-    function confirmReset() {
-      const confirmAction = confirm("Are you sure you want to reset all progress? This action cannot be undone.");
-      if (confirmAction) {
-        resetProgress();
-      }
-    }
+      function generateDays() {
+        const challengeName = document
+          .getElementById("challengeName")
+          .value.trim();
+        const totalDays = parseInt(document.getElementById("totalDays").value);
+        if (!totalDays || totalDays <= 0) return;
 
-    function resetProgress() {
-      const totalDays = parseInt(localStorage.getItem('challengeDays'));
-      if (totalDays) {
+        const startDate = new Date();
+        const endDate = new Date();
+        endDate.setDate(startDate.getDate() + totalDays - 1);
+
+        dateRange.textContent = `Challenge Duration: ${formatDate(
+          startDate
+        )} to ${formatDate(endDate)}`;
+
+        if (challengeName) {
+          title.textContent = challengeName;
+          localStorage.setItem("challengeName", challengeName);
+        } else {
+          title.textContent = "Trackify";
+          localStorage.removeItem("challengeName");
+        }
+
+        localStorage.setItem("challengeDays", totalDays);
+        localStorage.setItem("startDate", startDate.toISOString());
+
+        container.innerHTML = "";
         for (let i = 1; i <= totalDays; i++) {
-          localStorage.removeItem(`day_${i}`);
+          const isChecked = JSON.parse(localStorage.getItem(`day_${i}`));
+
+          const dayDiv = document.createElement("div");
+          dayDiv.className = "flex items-center space-x-2";
+
+          const checkbox = document.createElement("input");
+          checkbox.type = "checkbox";
+          checkbox.checked = isChecked;
+          checkbox.addEventListener("change", () => {
+            localStorage.setItem(`day_${i}`, checkbox.checked);
+          });
+
+          const label = document.createElement("label");
+          label.textContent = `Day ${i}`;
+
+          dayDiv.appendChild(checkbox);
+          dayDiv.appendChild(label);
+          container.appendChild(dayDiv);
         }
-        localStorage.removeItem('challengeDays');
-        localStorage.removeItem('challengeName');
-        localStorage.removeItem('startDate');
-        container.innerHTML = '';
-        document.getElementById('totalDays').value = '';
-        document.getElementById('challengeName').value = '';
-        title.textContent = 'Trackify';
-        dateRange.textContent = '';
-      }
-    }
-
-    // Load existing progress
-    window.addEventListener('load', () => {
-      const savedDays = parseInt(localStorage.getItem('challengeDays'));
-      const savedName = localStorage.getItem('challengeName');
-      const savedStartDate = localStorage.getItem('startDate');
-
-      if (savedName) {
-        document.getElementById('challengeName').value = savedName;
-        title.textContent = savedName;
       }
 
-      if (savedDays) {
-        document.getElementById('totalDays').value = savedDays;
+      function confirmReset() {
+        const confirmAction = confirm(
+          "Are you sure you want to reset all progress? This action cannot be undone."
+        );
+        if (confirmAction) {
+          resetProgress();
+        }
+      }
 
-        if (savedStartDate) {
-          const startDate = new Date(savedStartDate);
-          const endDate = new Date(startDate);
-          endDate.setDate(startDate.getDate() + savedDays - 1);
-          dateRange.textContent = `Challenge Duration: ${formatDate(startDate)} to ${formatDate(endDate)}`;
+      function resetProgress() {
+        const totalDays = parseInt(localStorage.getItem("challengeDays"));
+        if (totalDays) {
+          for (let i = 1; i <= totalDays; i++) {
+            localStorage.removeItem(`day_${i}`);
+          }
+          localStorage.removeItem("challengeDays");
+          localStorage.removeItem("challengeName");
+          localStorage.removeItem("startDate");
+          container.innerHTML = "";
+          document.getElementById("totalDays").value = "";
+          document.getElementById("challengeName").value = "";
+          title.textContent = "Trackify";
+          dateRange.textContent = "";
+        }
+      }
+
+      // Load existing progress
+      window.addEventListener("load", () => {
+        const savedDays = parseInt(localStorage.getItem("challengeDays"));
+        const savedName = localStorage.getItem("challengeName");
+        const savedStartDate = localStorage.getItem("startDate");
+
+        if (savedName) {
+          document.getElementById("challengeName").value = savedName;
+          title.textContent = savedName;
         }
 
-        generateDays();
-      }
-    });
-  </script>
-</body>
+        if (savedDays) {
+          document.getElementById("totalDays").value = savedDays;
+
+          if (savedStartDate) {
+            const startDate = new Date(savedStartDate);
+            const endDate = new Date(startDate);
+            endDate.setDate(startDate.getDate() + savedDays - 1);
+            dateRange.textContent = `Challenge Duration: ${formatDate(
+              startDate
+            )} to ${formatDate(endDate)}`;
+          }
+
+          generateDays();
+        }
+      });
+    </script>
+  </body>
 </html>
